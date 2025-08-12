@@ -56,11 +56,11 @@ export default function Login() {
 
       {/* Login form container */}
       <div 
-        className="p-4 py-5 rounded shadow-lg bg-white bg-opacity-80"
-        style={{ width: "360px", height: "400px", borderRadius: '10px', zIndex: 20 }}
+        className="p-4 py-4 rounded shadow-lg bg-white bg-opacity-80"
+        style={{ width: "360px", height: "390px", borderRadius: '10px', zIndex: 20 }}
       >
         <div className="text-center mb-3">
-          <h4 className="mt-2"><i>WorkWise Solutions</i></h4>
+          <h4 className="mt-2"><i>Employee Management System</i></h4>
         </div>
 
         <form onSubmit={handleLogin} autoComplete="off">
