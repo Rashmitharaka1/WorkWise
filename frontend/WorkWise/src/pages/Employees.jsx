@@ -1,4 +1,4 @@
-// Employees.jsx
+// src/pages/Employees.jsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
@@ -27,13 +27,9 @@ export default function Employees() {
 
   return (
     <div className="d-flex vh-100">
-      {/* Sidebar */}
       <Sidebar />
-
-      {/* Main Content */}
       <div className="flex-grow-1 p-4 bg-light">
-        
-        {/* Top Row - Title & Profile */}
+        {/* Title & Profile */}
         <Row className="align-items-center mb-4">
           <Col>
             <h3>
@@ -49,23 +45,16 @@ export default function Employees() {
           </Col>
         </Row>
 
-        {/* Search & Filters */}
+        {/* Filters & Add Button */}
         <Row className="mb-3">
-          {/* Search Box with Icon */}
           <Col md={4}>
             <Form.Group>
               <div className="d-flex align-items-center border rounded px-2 bg-white">
                 <FaSearch className="text-muted me-2" />
-                <Form.Control
-                  type="text"
-                  placeholder="Search"
-                  className="border-0 "
-                />
+                <Form.Control type="text" placeholder="Search" className="border-0" />
               </div>
             </Form.Group>
           </Col>
-
-          {/* Department Filter */}
           <Col md={3}>
             <Form.Select>
               <option>Filter by Department</option>
@@ -77,8 +66,6 @@ export default function Employees() {
               <option>Design</option>
             </Form.Select>
           </Col>
-
-          {/* Status Filter */}
           <Col md={2}>
             <Form.Select>
               <option>All Status</option>
@@ -86,10 +73,10 @@ export default function Employees() {
               <option>Inactive</option>
             </Form.Select>
           </Col>
-
-          {/* Add Employee Button */}
           <Col md={3} className="text-end">
-            <Button variant="primary">Add Employee</Button>
+            <Button variant="primary" onClick={() => navigate("/addemployee")}>
+              Add Employee
+            </Button>
           </Col>
         </Row>
 
@@ -119,18 +106,12 @@ export default function Employees() {
                 <td>{emp.role}</td>
                 <td>{emp.department}</td>
                 <td>
-                  <span
-                    className={`badge ${
-                      emp.status === "Active" ? "bg-success" : "bg-secondary"
-                    }`}
-                  >
+                  <span className={`badge ${emp.status === "Active" ? "bg-success" : "bg-secondary"}`}>
                     {emp.status}
                   </span>
                 </td>
                 <td>
-                  <FaEdit
-                    style={{ cursor: "pointer", marginRight: "10px" }}
-                  />
+                  <FaEdit style={{ cursor: "pointer", marginRight: "10px" }} />
                   <FaExternalLinkAlt style={{ cursor: "pointer" }} />
                 </td>
               </tr>

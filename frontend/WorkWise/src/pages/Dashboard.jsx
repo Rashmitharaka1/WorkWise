@@ -12,6 +12,8 @@ export default function Dashboard() {
         style={{ backgroundColor: "#f8f9fa", position: "relative" }}
       >
         <ProfileIcon /> {/* Top-right profile icon */}
+        <h2 className="mb-5">Welcome to WorkWise!</h2>
+        {/* Dashboard cards */}
         <DashboardCards />
       </div>
     </div>

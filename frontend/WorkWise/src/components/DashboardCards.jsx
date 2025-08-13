@@ -10,7 +10,7 @@ export default function DashboardCards() {
 
   return (
     <div style={{ padding: "0px" }}>
-      <h2 className="mb-5">Dashboard</h2>
+      
 
       {/* First Row */}
       <div style={{ display: "flex", gap: "40px", marginBottom: "40px" }}>
