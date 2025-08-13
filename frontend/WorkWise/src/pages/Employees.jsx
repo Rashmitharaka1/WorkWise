@@ -26,7 +26,7 @@ export default function Employees() {
   const navigate = useNavigate();
 
   return (
-    <div className="d-flex vh-100">
+    <div className="d-flex vh-100" >
       <Sidebar />
       <div className="flex-grow-1 p-4 bg-light">
         {/* Title & Profile */}
