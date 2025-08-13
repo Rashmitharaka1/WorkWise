@@ -1,62 +1,142 @@
-// src/pages/Employees.jsx
-import React, { useEffect, useState } from "react";
-import { supabase } from "../supabaseClient";
-import { Link } from "react-router-dom";
+// Employees.jsx
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import Sidebar from "../components/Sidebar";
+import ProfileIcon from "../components/ProfileIcon";
+import { Table, Button, Form, Row, Col } from "react-bootstrap";
+import { FaArrowLeft, FaEdit, FaExternalLinkAlt, FaSearch } from "react-icons/fa";
 
-export default function Employees(){
-  const [emps, setEmps] = useState([]);
-  const [loading, setLoading] = useState(true);
+// Profile images
+import profile1 from "../assets/profile1.jpg";
+import profile2 from "../assets/profile2.jpg";
+import profile3 from "../assets/profile3.jpg";
+import profile4 from "../assets/profile4.jpg";
+import profile5 from "../assets/profile5.jpg";
 
-  useEffect(() => { fetchList(); }, []);
+const employeesData = [
+  { photo: profile1, name: "Manoj Silva", role: "Marketing Manager", department: "Marketing", status: "Active" },
+  { photo: profile2, name: "Janith Perera", role: "HR Manager", department: "Human Resources", status: "Active" },
+  { photo: profile3, name: "Malsha Hansani", role: "Sales Representative", department: "Sales", status: "Active" },
+  { photo: profile4, name: "Supun Perera", role: "Product Design", department: "Design", status: "Inactive" },
+  { photo: profile5, name: "Rashmi Seya", role: "Software Engineer", department: "IT & Support", status: "Active" },
+  { photo: profile5, name: "Sadi Perera", role: "Accountant", department: "Finance", status: "Inactive" },
+];
 
-  async function fetchList(){
-    setLoading(true);
-    const { data, error } = await supabase.from("profiles").select("*").order("created_at", {ascending:false});
-    if (!error) setEmps(data || []);
-    setLoading(false);
-  }
-
-  async function handleDelete(id){
-    if (!confirm("Delete this employee?")) return;
-    const { error } = await supabase.from("profiles").delete().eq("id", id);
-    if (error) alert(error.message);
-    else fetchList();
-  }
+export default function Employees() {
+  const navigate = useNavigate();
 
   return (
-    <div className="app-shell">
-      <div className="card">
-        <div className="header">
-          <div><div className="logo">WorkWise</div><div className="small">Employee management</div></div>
-          <div className="topbar">
-            <Link to="/dashboard"><button className="btn secondary">Back</button></Link>
-            <Link to="/employees/new"><button className="btn">Add Employee</button></Link>
-          </div>
-        </div>
+    <div className="d-flex vh-100">
+      {/* Sidebar */}
+      <Sidebar />
 
-        {loading ? <p className="small">Loading...</p> : (
-          <div style={{overflowX:"auto"}}>
-            <table className="table" role="table">
-              <thead>
-                <tr><th>Name</th><th>Email</th><th>Position</th><th>Role</th><th>Actions</th></tr>
-              </thead>
-              <tbody>
-                {emps.map(e => (
-                  <tr key={e.id}>
-                    <td>{e.full_name}</td>
-                    <td className="small">{e.email}</td>
-                    <td>{e.position || "-"}</td>
-                    <td><span className="badge">{e.role || "employee"}</span></td>
-                    <td className="row-actions">
-                      <Link to={`/employees/${e.id}`}><button className="btn secondary">Edit</button></Link>
-                      <button className="btn" onClick={() => handleDelete(e.id)}>Delete</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+      {/* Main Content */}
+      <div className="flex-grow-1 p-4 bg-light">
+        
+        {/* Top Row - Title & Profile */}
+        <Row className="align-items-center mb-4">
+          <Col>
+            <h3>
+              <FaArrowLeft
+                style={{ cursor: "pointer", marginRight: "10px" }}
+                onClick={() => navigate("/dashboard")}
+              />
+              Employees
+            </h3>
+          </Col>
+          <Col className="text-end">
+            <ProfileIcon />
+          </Col>
+        </Row>
+
+        {/* Search & Filters */}
+        <Row className="mb-3">
+          {/* Search Box with Icon */}
+          <Col md={4}>
+            <Form.Group>
+              <div className="d-flex align-items-center border rounded px-2 bg-white">
+                <FaSearch className="text-muted me-2" />
+                <Form.Control
+                  type="text"
+                  placeholder="Search"
+                  className="border-0 "
+                />
+              </div>
+            </Form.Group>
+          </Col>
+
+          {/* Department Filter */}
+          <Col md={3}>
+            <Form.Select>
+              <option>Filter by Department</option>
+              <option>Marketing</option>
+              <option>Sales</option>
+              <option>Finance</option>
+              <option>Human Resources</option>
+              <option>IT & Support</option>
+              <option>Design</option>
+            </Form.Select>
+          </Col>
+
+          {/* Status Filter */}
+          <Col md={2}>
+            <Form.Select>
+              <option>All Status</option>
+              <option>Active</option>
+              <option>Inactive</option>
+            </Form.Select>
+          </Col>
+
+          {/* Add Employee Button */}
+          <Col md={3} className="text-end">
+            <Button variant="primary">Add Employee</Button>
+          </Col>
+        </Row>
+
+        {/* Employee Table */}
+        <Table hover bordered className="bg-white">
+          <thead>
+            <tr>
+              <th>Photo</th>
+              <th>Name</th>
+              <th>Role</th>
+              <th>Department</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {employeesData.map((emp, index) => (
+              <tr key={index}>
+                <td>
+                  <img
+                    src={emp.photo}
+                    alt={emp.name}
+                    style={{ width: "50px", height: "50px", borderRadius: "10%" }}
+                  />
+                </td>
+                <td>{emp.name}</td>
+                <td>{emp.role}</td>
+                <td>{emp.department}</td>
+                <td>
+                  <span
+                    className={`badge ${
+                      emp.status === "Active" ? "bg-success" : "bg-secondary"
+                    }`}
+                  >
+                    {emp.status}
+                  </span>
+                </td>
+                <td>
+                  <FaEdit
+                    style={{ cursor: "pointer", marginRight: "10px" }}
+                  />
+                  <FaExternalLinkAlt style={{ cursor: "pointer" }} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
       </div>
     </div>
   );

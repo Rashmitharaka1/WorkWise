@@ -3,7 +3,7 @@ import React from "react";
 export default function DashboardCards() {
   const cards = [
     { title: "Total Employees", count: 25 },
-    { title: "Departments", count: 5 },
+    { title: "Departments", count: 6 },
     { title: "Attendance Today", count: 18 },
     { title: "Pending Requests", count: 7 }
   ];
