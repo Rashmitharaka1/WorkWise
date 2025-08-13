@@ -7,6 +7,7 @@ import Employees from "./pages/Employees";
 import EmployeeForm from "./pages/EmployeeForm";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
+import Departments from "./pages/Departments";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -33,6 +34,13 @@ export default function App(){
             <Employees />
           </ProtectedRoute>
         } />
+
+        <Route path="/departments" element={
+          <ProtectedRoute requireAdmin={true}>
+            <Departments />
+          </ProtectedRoute>
+        } />
+
 
         <Route path="/employees/:id" element={
           <ProtectedRoute requireAdmin={true}>
