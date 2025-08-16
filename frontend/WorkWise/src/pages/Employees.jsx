@@ -1,3 +1,4 @@
+// src/pages/Employees.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
@@ -31,6 +32,23 @@ export default function Employees() {
 
   useEffect(() => {
     fetchEmployees();
+
+    // ✅ Realtime subscription for live updates
+    const channel = supabase
+      .channel("realtime-employees")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "employees" },
+        (payload) => {
+          console.log("Realtime change:", payload);
+          fetchEmployees();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   // Delete employee
