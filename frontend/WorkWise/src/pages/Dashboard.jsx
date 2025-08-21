@@ -109,7 +109,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="d-flex" style={{ position: "relative" }}>
+    <div className="d-flex" style={{ position: "relative", marginLeft: "220px" }}>
       <Sidebar />
       <div
         className="flex-grow-1 p-4"

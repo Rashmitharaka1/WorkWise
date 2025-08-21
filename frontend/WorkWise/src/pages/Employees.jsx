@@ -84,7 +84,7 @@ export default function Employees() {
   return (
     <div className="d-flex vh-100">
       <Sidebar />
-      <div className="flex-grow-1 p-4 bg-light">
+      <div className="flex-grow-1 p-4 bg-light" style={{ marginLeft: "220px" }}>
         {/* Title */}
         <Row className="align-items-center mb-4">
           <Col>

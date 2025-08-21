@@ -202,7 +202,7 @@ export default function Attendance() {
   return (
     <div className="d-flex vh-100">
       <Sidebar />
-      <div className="flex-grow-1 p-4 bg-light">
+      <div className="flex-grow-1 p-4 bg-light" style={{ marginLeft: "220px" }}>
         <Row className="align-items-center mb-4">
           <Col>
             <h3>
@@ -219,7 +219,7 @@ export default function Attendance() {
         </Row>
 
         {/* Cards */}
-        <div style={{ display: "flex", gap: "40px", marginBottom: "20px" }}>
+        <div style={{ display: "flex", gap: "30px", marginBottom: "20px" }}>
           {cards.map((card, i) => (
             <div
               key={i}
