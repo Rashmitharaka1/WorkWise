@@ -31,25 +31,31 @@ export default function Sidebar() {
 
   return (
     <div
-      className="d-flex flex-column bg-white p-3 vh-100 border-end"
-      style={{ width: "220px", position: "relative" }}
+      className="d-flex flex-column bg-white p-3 border-end"
+      style={{
+        width: "220px",
+        position: "fixed",  // ✅ keeps sidebar fixed
+        top: 0,
+        left: 0,
+        height: "100vh",    // ✅ full screen height
+        zIndex: 1000,
+      }}
     >
       {/* Logo */}
       <img
         src={Logo}
         alt="Logo"
         style={{
-          position: "absolute",
-          top: "-15px",
-          left: "15px",
           width: "130px",
           height: "auto",
-          zIndex: 10,
+          marginBottom: "-30px",
+          marginLeft: "10px",
+          marginTop: "-30px",
         }}
       />
 
       {/* Navigation Links */}
-      <nav style={{ marginTop: "80px" }}>
+      <nav>
         <NavLink
           to="/dashboard"
           className={({ isActive }) =>
