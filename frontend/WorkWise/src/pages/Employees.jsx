@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import ProfileIcon from "../components/ProfileIcon";
 import { Table, Button, Form, Row, Col, Spinner, Modal } from "react-bootstrap";
-import { FaArrowLeft, FaEdit, FaTrash, FaSearch } from "react-icons/fa";
+import { FaArrowLeft, FaTrash, FaSearch } from "react-icons/fa";
 import { supabase } from "../supabaseClient";
 
 export default function Employees() {
@@ -14,7 +14,7 @@ export default function Employees() {
   const [deleteId, setDeleteId] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  // Fetch employees from Supabase
+  // Fetch employees
   const fetchEmployees = async () => {
     setLoading(true);
     const { data, error } = await supabase
@@ -33,16 +33,12 @@ export default function Employees() {
   useEffect(() => {
     fetchEmployees();
 
-    // ✅ Realtime subscription for live updates
     const channel = supabase
       .channel("realtime-employees")
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "employees" },
-        (payload) => {
-          console.log("Realtime change:", payload);
-          fetchEmployees();
-        }
+        () => fetchEmployees()
       )
       .subscribe();
 
@@ -68,7 +64,7 @@ export default function Employees() {
     <div className="d-flex vh-100">
       <Sidebar />
       <div className="flex-grow-1 p-4 bg-light">
-        {/* Title & Profile */}
+        {/* Title */}
         <Row className="align-items-center mb-4">
           <Col>
             <h3>
@@ -100,7 +96,7 @@ export default function Employees() {
               <option>Marketing</option>
               <option>Sales</option>
               <option>Finance</option>
-              <option>Human Resources</option>
+              <option>HR</option>
               <option>IT & Support</option>
               <option>Design</option>
             </Form.Select>
@@ -147,7 +143,13 @@ export default function Employees() {
                         style={{ width: "50px", height: "50px", borderRadius: "10%" }}
                       />
                     </td>
-                    <td>{emp.full_name}</td>
+                    {/* ✅ Clickable Name → navigate to Profile */}
+                    <td
+                      style={{ cursor: "pointer", color: "blue" }}
+                      onClick={() => navigate(`/profile/${emp.id}`)}
+                    >
+                      {emp.full_name}
+                    </td>
                     <td>{emp.job_title}</td>
                     <td>{emp.department}</td>
                     <td>
@@ -156,12 +158,8 @@ export default function Employees() {
                       </span>
                     </td>
                     <td>
-                      <FaEdit
-                        style={{ cursor: "pointer", marginRight: "15px", color: "blue" }}
-                        onClick={() => navigate(`/editemployee/${emp.id}`)}
-                      />
                       <FaTrash
-                        style={{ cursor: "pointer", color: "red" }}
+                        style={{ cursor: "pointer", color: "red", marginLeft: "30px" }}
                         onClick={() => {
                           setDeleteId(emp.id);
                           setShowDeleteModal(true);
@@ -181,7 +179,7 @@ export default function Employees() {
           </Table>
         )}
 
-        {/* Delete Confirmation Modal */}
+        {/* Delete Modal */}
         <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
           <Modal.Header closeButton>
             <Modal.Title>Delete Employee</Modal.Title>
