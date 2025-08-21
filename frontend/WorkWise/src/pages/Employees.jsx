@@ -14,6 +14,11 @@ export default function Employees() {
   const [deleteId, setDeleteId] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
+  // 🔹 Filters
+  const [departmentFilter, setDepartmentFilter] = useState("Filter by Department");
+  const [statusFilter, setStatusFilter] = useState("All Status");
+  const [searchQuery, setSearchQuery] = useState(""); // ✅ new search state
+
   // Fetch employees
   const fetchEmployees = async () => {
     setLoading(true);
@@ -60,6 +65,22 @@ export default function Employees() {
     setDeleteId(null);
   };
 
+  // 🔹 Apply filters + search
+  const filteredEmployees = employees.filter((emp) => {
+    const departmentMatch =
+      departmentFilter === "Filter by Department" || emp.department === departmentFilter;
+
+    const statusMatch =
+      statusFilter === "All Status" || emp.status === statusFilter;
+
+    const searchMatch =
+      emp.full_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      emp.job_title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      emp.department?.toLowerCase().includes(searchQuery.toLowerCase());
+
+    return departmentMatch && statusMatch && searchMatch;
+  });
+
   return (
     <div className="d-flex vh-100">
       <Sidebar />
@@ -86,12 +107,21 @@ export default function Employees() {
             <Form.Group>
               <div className="d-flex align-items-center border rounded px-2 bg-white">
                 <FaSearch className="text-muted me-2" />
-                <Form.Control type="text" placeholder="Search" className="border-0" />
+                <Form.Control
+                  type="text"
+                  placeholder="Search by name, role, or department"
+                  className="border-0"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)} // ✅ update search
+                />
               </div>
             </Form.Group>
           </Col>
           <Col md={3}>
-            <Form.Select>
+            <Form.Select
+              value={departmentFilter}
+              onChange={(e) => setDepartmentFilter(e.target.value)}
+            >
               <option>Filter by Department</option>
               <option>Marketing</option>
               <option>Sales</option>
@@ -102,10 +132,13 @@ export default function Employees() {
             </Form.Select>
           </Col>
           <Col md={2}>
-            <Form.Select>
+            <Form.Select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+            >
               <option>All Status</option>
-              <option>Active</option>
-              <option>Inactive</option>
+              <option>Present</option>
+              <option>Absent</option>
             </Form.Select>
           </Col>
           <Col md={3} className="text-end">
@@ -133,8 +166,8 @@ export default function Employees() {
               </tr>
             </thead>
             <tbody>
-              {employees.length > 0 ? (
-                employees.map((emp) => (
+              {filteredEmployees.length > 0 ? (
+                filteredEmployees.map((emp) => (
                   <tr key={emp.id}>
                     <td>
                       <img
@@ -153,7 +186,11 @@ export default function Employees() {
                     <td>{emp.job_title}</td>
                     <td>{emp.department}</td>
                     <td>
-                      <span className={`badge ${emp.status === "Active" ? "bg-success" : "bg-secondary"}`}>
+                      <span
+                        className={`badge ${
+                          emp.status === "Active" ? "bg-success" : "bg-secondary"
+                        }`}
+                      >
                         {emp.status}
                       </span>
                     </td>
