@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import DashboardCards from "../components/DashboardCards";
 import ProfileIcon from "../components/ProfileIcon";
+import UserProfile from "../components/UserProfile"; // ✅ import UserProfile
 import {
   Row,
   Col,
@@ -14,15 +15,19 @@ import {
   Spinner,
 } from "react-bootstrap";
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
-import { supabase } from "../supabaseClient"; // ✅ import Supabase client
+import { supabase } from "../supabaseClient";
 
 export default function Dashboard() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Event modal state
   const [showModal, setShowModal] = useState(false);
-  const [editEvent, setEditEvent] = useState(null); // event object when editing
+  const [editEvent, setEditEvent] = useState(null);
   const [formData, setFormData] = useState({ date: "", event: "" });
+
+  // User profile modal state
+  const [showProfile, setShowProfile] = useState(false);
 
   // Fetch events from Supabase on load
   useEffect(() => {
@@ -60,52 +65,39 @@ export default function Dashboard() {
     if (!formData.date || !formData.event) return;
 
     if (editEvent) {
-      // Update existing event
       const { error } = await supabase
         .from("events")
         .update({ date: formData.date, event: formData.event })
         .eq("id", editEvent.id);
 
-      if (error) {
-        alert("Error updating event: " + error.message);
-      } else {
+      if (error) alert("Error updating event: " + error.message);
+      else
         setEvents(
           events.map((e) =>
             e.id === editEvent.id ? { ...e, ...formData } : e
           )
         );
-      }
     } else {
-      // Insert new event
       const { data, error } = await supabase
         .from("events")
         .insert([{ date: formData.date, event: formData.event }])
         .select();
 
-      if (error) {
-        alert("Error adding event: " + error.message);
-      } else if (data) {
-        setEvents([...events, ...data]);
-      }
+      if (error) alert("Error adding event: " + error.message);
+      else if (data) setEvents([...events, ...data]);
     }
 
     setShowModal(false);
   };
 
-  // Delete event with confirmation
+  // Delete event
   const handleDelete = async (id) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this event?"
-    );
-    if (!confirmDelete) return;
+    if (!window.confirm("Are you sure you want to delete this event?")) return;
 
     const { error } = await supabase.from("events").delete().eq("id", id);
 
-    if (error) {
-      alert("Error deleting event: " + error.message);
-    } else {
-      setEvents(events.filter((e) => e.id !== id));
-    }
+    if (error) alert("Error deleting event: " + error.message);
+    else setEvents(events.filter((e) => e.id !== id));
   };
 
   return (
@@ -116,9 +108,11 @@ export default function Dashboard() {
         style={{ backgroundColor: "#f8f9fa", position: "relative" }}
       >
         {/* Top-right profile icon */}
-        <ProfileIcon />
+        <div style={{ position: "absolute", top: 20, right: 20 }}>
+          <ProfileIcon onClick={() => setShowProfile(true)} />
+        </div>
 
-        <h2 className="mb-5">Welcome to WorkWise !</h2>
+        <h2 className="mb-5">Welcome to WorkWise!</h2>
 
         {/* Dashboard cards */}
         <DashboardCards />
@@ -152,11 +146,7 @@ export default function Dashboard() {
                       </span>
                       <div>
                         <FaEdit
-                          style={{
-                            cursor: "pointer",
-                            marginRight: "12px",
-                            color: "#0d6efd",
-                          }}
+                          style={{ cursor: "pointer", marginRight: "12px", color: "#0d6efd" }}
                           onClick={() => handleShowModal(e)}
                           title="Edit Event"
                         />
@@ -174,12 +164,10 @@ export default function Dashboard() {
           </Col>
         </Row>
 
-        {/* Modal for Add/Edit */}
+        {/* Modal for Add/Edit Event */}
         <Modal show={showModal} onHide={() => setShowModal(false)}>
           <Modal.Header closeButton>
-            <Modal.Title>
-              {editEvent ? "Edit Event" : "Add Event"}
-            </Modal.Title>
+            <Modal.Title>{editEvent ? "Edit Event" : "Add Event"}</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <Form>
@@ -214,6 +202,21 @@ export default function Dashboard() {
               Save
             </Button>
           </Modal.Footer>
+        </Modal>
+
+        {/* Modal for User Profile */}
+        <Modal
+          show={showProfile}
+          onHide={() => setShowProfile(false)}
+          size="lg"
+          centered
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>User Profile</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <UserProfile />
+          </Modal.Body>
         </Modal>
       </div>
     </div>
