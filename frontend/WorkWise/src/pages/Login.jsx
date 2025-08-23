@@ -46,7 +46,7 @@ export default function Login() {
         alt="Logo" 
         style={{
           position: 'absolute',
-          top: '20px',
+          top: '-20px',
           left: '20px',
           width: '150px',
           height: 'auto',
