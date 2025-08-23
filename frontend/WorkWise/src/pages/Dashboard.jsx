@@ -101,14 +101,14 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="d-flex" style={{ position: "relative", marginLeft: "220px" }}>
+    <div className="d-flex" style={{ position: "relative", marginLeft: "230px" }}>
       <Sidebar />
       <div
         className="flex-grow-1 p-4"
         style={{ backgroundColor: "#f8f9fa", position: "relative" }}
       >
         {/* Top-right profile icon */}
-        <div style={{ position: "absolute", top: 20, right: 20 }}>
+        <div style={{ position: "absolute", top: 0, right: 0 }}>
           <ProfileIcon onClick={() => setShowProfile(true)} />
         </div>
 

@@ -9,6 +9,7 @@ export default function Profile() {
   const [employee, setEmployee] = useState(null);
   const [formData, setFormData] = useState({});
   const [activeTab, setActiveTab] = useState("personal");
+  const [uploading, setUploading] = useState(false);
 
   // Fetch employee by id
   useEffect(() => {
@@ -35,7 +36,7 @@ export default function Profile() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Save changes
+  // Save changes (profile info only, not photo)
   const handleSave = async (e) => {
     e.preventDefault();
 
@@ -50,22 +51,67 @@ export default function Profile() {
       console.error("Error updating employee:", error.message);
       alert("Failed to update employee.");
     } else {
-      setEmployee(data); // update local state with saved data
-      setFormData(data); // reset formData to saved version
+      setEmployee(data);
+      setFormData(data);
       alert("Employee updated successfully!");
     }
   };
 
-  // Cancel changes (reset form)
+  // Cancel changes
   const handleCancel = () => {
-    setFormData(employee); // restore last saved data
+    setFormData(employee);
+  };
+
+  // Upload profile photo
+  const handlePhotoUpload = async (e) => {
+    try {
+      setUploading(true);
+      const file = e.target.files[0];
+      if (!file) return;
+
+      // unique file path: avatars/{employeeId}/{timestamp_filename}
+      const filePath = `avatars/${id}/${Date.now()}_${file.name}`;
+
+      // upload to bucket
+      const { error: uploadError } = await supabase.storage
+        .from("avatars")
+        .upload(filePath, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      // get public URL
+      const { data: publicData } = supabase.storage
+        .from("avatars")
+        .getPublicUrl(filePath);
+
+      const publicUrl = publicData.publicUrl;
+
+      // save URL to employees table
+      const { data, error: updateError } = await supabase
+        .from("employees")
+        .update({ avatar_url: publicUrl })
+        .eq("id", id)
+        .select()
+        .single();
+
+      if (updateError) throw updateError;
+
+      setEmployee(data);
+      setFormData(data);
+      alert("Profile photo updated!");
+    } catch (err) {
+      console.error("Photo upload failed:", err.message);
+      alert("Upload failed: " + err.message);
+    } finally {
+      setUploading(false);
+    }
   };
 
   if (!employee) {
     return <div className="container py-4">Loading profile...</div>;
   }
 
-  // Dummy data for now (replace later with real attendance/performance tables)
+  // Dummy data for other tabs
   const attendanceData = [
     { date: "2025-08-01", status: "Present" },
     { date: "2025-08-02", status: "Absent" },
@@ -89,12 +135,22 @@ export default function Profile() {
             className="card p-3 text-center"
             style={{ backgroundColor: "#eaf2fb" }}
           >
-            <img
-              src={employee.avatar_url || "https://via.placeholder.com/100"}
-              alt={employee.full_name}
-              className="rounded-circle mx-auto mb-3"
-              style={{ width: "100px", height: "100px" }}
-            />
+            <div className="position-relative d-inline-block">
+              <img
+                src={employee.avatar_url || "https://via.placeholder.com/100"}
+                alt={employee.full_name}
+                className="rounded-circle mx-auto mb-3"
+                style={{ width: "100px", height: "100px", objectFit: "cover" }}
+              />
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handlePhotoUpload}
+                className="position-absolute top-0 start-0 w-100 h-100 opacity-0"
+                style={{ cursor: "pointer" }}
+                disabled={uploading}
+              />
+            </div>
             <h5>{employee.full_name}</h5>
             <p className="mb-1">{employee.job_title}</p>
             <p className="text-muted">{employee.department}</p>
