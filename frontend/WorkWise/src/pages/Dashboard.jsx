@@ -112,7 +112,7 @@ export default function Dashboard() {
           <ProfileIcon onClick={() => setShowProfile(true)} />
         </div>
 
-        <h2 className="mb-5">Welcome to WorkWise!</h2>
+        <h2 className="mb-5 text-muted">Welcome to WorkWise!</h2>
 
         {/* Dashboard cards */}
         <DashboardCards />
@@ -121,7 +121,7 @@ export default function Dashboard() {
         <Row className="mt-4">
           <Col md={12}>
             <Card className="shadow-sm p-3">
-              <div className="d-flex justify-content-between align-items-center mb-2">
+              <div className="d-flex justify-content-between align-items-center mb-2 text-muted">
                 <h5>Upcoming Events</h5>
                 <FaPlus
                   style={{ cursor: "pointer", color: "green" }}
@@ -131,7 +131,7 @@ export default function Dashboard() {
               </div>
 
               {loading ? (
-                <div className="text-center my-3">
+                <div className="text-center my-3 ">
                   <Spinner animation="border" />
                 </div>
               ) : (
@@ -139,7 +139,7 @@ export default function Dashboard() {
                   {events.map((e) => (
                     <ListGroup.Item
                       key={e.id}
-                      className="d-flex justify-content-between align-items-center"
+                      className="d-flex justify-content-between align-items-center text-muted"
                     >
                       <span>
                         <strong>{e.date}</strong> - {e.event}

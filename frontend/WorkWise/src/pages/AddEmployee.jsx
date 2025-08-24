@@ -313,10 +313,10 @@ const AddEmployee = () => {
         </Row>
 
         <div className="d-flex justify-content-end gap-2">
-          <Button variant="secondary" onClick={() => navigate("/employees")}>
+          <Button className="btn btn-info text-white" onClick={() => navigate("/employees")}>
             Cancel
           </Button>
-          <Button variant="primary" type="submit" disabled={uploading}>
+          <Button className="btn btn-info text-white" type="submit" disabled={uploading}>
             {uploading ? "Uploading..." : "Save"}
           </Button>
         </div>

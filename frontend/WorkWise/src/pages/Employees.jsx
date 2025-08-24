@@ -86,7 +86,7 @@ export default function Employees() {
       <Sidebar />
       <div className="flex-grow-1 p-4 bg-light" style={{ marginLeft: "220px" }}>
         {/* Title */}
-        <Row className="align-items-center mb-4">
+        <Row className="align-items-center mb-4 text-muted">
           <Col>
             <h3>
               <FaArrowLeft
@@ -105,7 +105,7 @@ export default function Employees() {
         <Row className="mb-3">
           <Col md={4}>
             <Form.Group>
-              <div className="d-flex align-items-center border rounded px-2 bg-white">
+              <div className="d-flex align-items-center border rounded px-2 bg-white ">
                 <FaSearch className="text-muted me-2" />
                 <Form.Control
                   type="text"
@@ -142,7 +142,7 @@ export default function Employees() {
             </Form.Select>
           </Col>
           <Col md={3} className="text-end">
-            <Button variant="primary" onClick={() => navigate("/addemployee")}>
+            <Button className="btn btn-primary text-white" onClick={() => navigate("/addemployee")}>
               Add Employee
             </Button>
           </Col>
@@ -150,19 +150,19 @@ export default function Employees() {
 
         {/* Employee Table */}
         {loading ? (
-          <div className="text-center mt-5">
+          <div className="text-center mt-5 ">
             <Spinner animation="border" />
           </div>
         ) : (
           <Table hover bordered className="bg-white">
-            <thead>
+            <thead className="text-muted">
               <tr>
-                <th>Photo</th>
-                <th>Name</th>
-                <th>Role</th>
-                <th>Department</th>
-                <th>Status</th>
-                <th>Actions</th>
+                <th className="text-muted">Photo</th>
+                <th className="text-muted">Name</th>
+                <th className="text-muted">Role</th>
+                <th className="text-muted">Department</th>
+                <th className="text-muted">Status</th>
+                <th className="text-muted">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -178,7 +178,7 @@ export default function Employees() {
                     </td>
                     {/* ✅ Clickable Name → navigate to Profile */}
                     <td
-                      style={{ cursor: "pointer", color: "blue" }}
+                      style={{ cursor: "pointer", color: "#0d6efd" }}
                       onClick={() => navigate(`/profile/${emp.id}`)}
                     >
                       {emp.full_name}
@@ -186,14 +186,22 @@ export default function Employees() {
                     <td>{emp.job_title}</td>
                     <td>{emp.department}</td>
                     <td>
-                      <span
-                        className={`badge ${
-                          emp.status === "Active" ? "bg-success" : "bg-secondary"
-                        }`}
-                      >
-                        {emp.status}
-                      </span>
-                    </td>
+  <span
+    style={{
+      display: "inline-block",
+      padding: "0.35em 0.6em",
+      fontSize: "0.8rem",
+      
+      fontWeight: 500,
+      lineHeight: 1,
+      color: emp.status === "Present" ? "#000" : "#721c24",
+      backgroundColor: emp.status === "Present" ? "#b0dbf5ff" : "#f7c0c4ff",
+      borderRadius: "0.5rem",
+    }}
+  >
+    {emp.status}
+  </span>
+</td>
                     <td>
                       <FaTrash
                         style={{ cursor: "pointer", color: "red", marginLeft: "30px" }}

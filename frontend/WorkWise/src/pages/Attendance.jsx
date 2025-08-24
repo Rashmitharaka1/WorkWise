@@ -205,7 +205,7 @@ export default function Attendance() {
       <div className="flex-grow-1 p-4 bg-light" style={{ marginLeft: "220px" }}>
         <Row className="align-items-center mb-4">
           <Col>
-            <h3>
+            <h3 className="text-muted">
               <FaArrowLeft
                 style={{ cursor: "pointer", marginRight: "10px" }}
                 onClick={() => navigate("/dashboard")}
@@ -251,17 +251,19 @@ export default function Attendance() {
                     }
                     style={{
                       fontSize: "36px",
+                      fontWeight:"bold",
                       textAlign: "center",
                       border: "none",
                       background: "transparent",
                       width: "120px",
+                      color: "#063085ff",
                     }}
                   />
                 ) : (
                   card.count
                 )}
               </div>
-              <div style={{ fontSize: "20px" }}>{card.title}</div>
+              <div style={{ fontSize: "20px",  }}>{card.title}</div>
             </div>
           ))}
         </div>
@@ -273,14 +275,14 @@ export default function Attendance() {
           </div>
         ) : !selectedDept ? (
           <>
-            <h5 style={{ marginBottom: "15px" }}>
+            <h5 className="text-muted" style={{ marginBottom: "15px"  }}>
               Select a department to view and mark attendance
             </h5>
             <Table bordered hover className="bg-white" style={{ width: "70%" }}>
               <thead>
                 <tr>
-                  <th>Department</th>
-                  <th>Present Employees</th>
+                  <th className="text-muted">Department</th>
+                  <th className="text-muted">Present Employees</th>
                 </tr>
               </thead>
               <tbody>
@@ -301,20 +303,21 @@ export default function Attendance() {
         ) : (
           <>
             <h5
+              className="text-muted"
               style={{ cursor: "pointer", color: "blue", marginTop: "20px" }}
               onClick={() => setSelectedDept(null)}
             >
               ← Back to Departments
             </h5>
-            <h4>{selectedDept} Department Attendance</h4>
+            <h4 >{selectedDept} Department Attendance</h4>
             <Table bordered hover className="bg-white">
               <thead>
                 <tr>
-                  <th>Date</th>
-                  <th>Employee Name</th>
-                  <th>Check-In</th>
-                  <th>Check-Out</th>
-                  <th>Status</th>
+                  <th className="text-muted">Date</th>
+                  <th className="text-muted">Employee Name</th>
+                  <th className="text-muted">Check-In</th>
+                  <th className="text-muted">Check-Out</th>
+                  <th className="text-muted">Status</th>
                 </tr>
               </thead>
               <tbody>
@@ -346,14 +349,23 @@ export default function Attendance() {
                         style={{ width: "90px" }}
                       />
                     </td>
-                    <td
-                      style={{
-                        color: rec.status === "Present" ? "green" : "red",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      {rec.status}
-                    </td>
+                    <td>
+  <span
+    style={{
+      display: "inline-block",
+      padding: "0.35em 0.6em",
+      fontSize: "0.8rem",
+      fontWeight: 500,
+      lineHeight: 1,
+      color: rec.status === "Present" ? "#000" : "#721c24",
+      backgroundColor: rec.status === "Present" ? "#b0dbf5ff" : "#f7c0c4ff",
+      borderRadius: "0.5rem",
+    }}
+  >
+    {rec.status}
+  </span>
+</td>
+
                   </tr>
                 ))}
               </tbody>

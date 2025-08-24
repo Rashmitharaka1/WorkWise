@@ -69,9 +69,9 @@ export default function Departments() {
       <Sidebar />
       <div className="flex-grow-1 p-4 bg-light" style={{ marginLeft: "220px" }}>
         {/* Header */}
-        <Row className="align-items-center mb-4">
+        <Row className="align-items-center mb-4 " >
           <Col>
-            <h3>
+            <h3 className="text-muted">
               <FaArrowLeft
                 style={{ cursor: "pointer", marginRight: "10px" }}
                 onClick={() => navigate("/dashboard")}
@@ -133,15 +133,15 @@ export default function Departments() {
 
         {/* Departments Table */}
         {loading ? (
-          <div className="text-center mt-5">
+          <div className="text-center mt-5 ">
             <Spinner animation="border" />
           </div>
         ) : (
-          <Table bordered hover className="bg-white">
-            <thead>
+          <Table bordered hover className="bg-white ">
+            <thead >
               <tr>
-                <th>Name</th>
-                <th>Employees</th>
+                <th className="text-muted">Name</th>
+                <th className="text-muted">Employees</th>
               </tr>
             </thead>
             <tbody>
