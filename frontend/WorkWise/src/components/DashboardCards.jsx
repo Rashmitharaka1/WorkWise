@@ -1,10 +1,13 @@
 import React from "react";
 
-export default function DashboardCards() {
+export default function DashboardCards({ employeeCount, attendanceToday }) {
+  const safeAttend = Number.isFinite(attendanceToday) ? attendanceToday : 0;
+  const safeEmployees = Number.isFinite(employeeCount) ? employeeCount : 0;
+
   const cards = [
-    { title: "Total Employees", count: 25 },
-    { title: "Departments", count: 6 },
-    { title: "Attendance Today", count: 18 },
+    { title: "Total Employees", count: safeEmployees },
+    { title: "Departments", count: 6 }, // ✅ exactly 6
+    { title: "Present Today", count: safeAttend }, // ✅ from Attendance.jsx via localStorage
   ];
 
   return (
@@ -14,7 +17,7 @@ export default function DashboardCards() {
           display: "flex",
           gap: "40px",
           marginBottom: "40px",
-          flexWrap: "wrap", // allows wrapping if screen is small
+          flexWrap: "wrap",
         }}
       >
         {cards.map((card, index) => (

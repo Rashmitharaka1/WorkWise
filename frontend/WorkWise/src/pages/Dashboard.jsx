@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import DashboardCards from "../components/DashboardCards";
 import ProfileIcon from "../components/ProfileIcon";
-import UserProfile from "../components/UserProfile"; // ✅ import UserProfile
+import UserProfile from "../components/UserProfile";
 import {
   Row,
   Col,
@@ -21,6 +21,10 @@ export default function Dashboard() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // ✅ Counts
+  const [employeeCount, setEmployeeCount] = useState(0);
+  const [attendanceToday, setAttendanceToday] = useState(0);
+
   // Event modal state
   const [showModal, setShowModal] = useState(false);
   const [editEvent, setEditEvent] = useState(null);
@@ -29,7 +33,7 @@ export default function Dashboard() {
   // User profile modal state
   const [showProfile, setShowProfile] = useState(false);
 
-  // Fetch events from Supabase on load
+  // Fetch events
   useEffect(() => {
     const fetchEvents = async () => {
       setLoading(true);
@@ -41,7 +45,7 @@ export default function Dashboard() {
       if (error) {
         console.error("Error fetching events:", error.message);
       } else {
-        setEvents(data);
+        setEvents(data || []);
       }
       setLoading(false);
     };
@@ -49,7 +53,49 @@ export default function Dashboard() {
     fetchEvents();
   }, []);
 
-  // Open modal (for Add or Edit)
+  // ✅ Fetch employee count
+  useEffect(() => {
+    const fetchEmployeeCount = async () => {
+      try {
+        const { count, error } = await supabase
+          .from("employees")
+          .select("*", { count: "exact", head: true });
+        if (error) throw error;
+        setEmployeeCount(count || 0);
+      } catch (err) {
+        console.error("Error fetching employees:", err.message);
+        setEmployeeCount(0);
+      }
+    };
+    fetchEmployeeCount();
+  }, []);
+
+  // ✅ Fetch Present Today (from Supabase not just localStorage)
+  useEffect(() => {
+    const fetchAttendanceToday = async () => {
+      try {
+        const today = new Date().toISOString().split("T")[0];
+        const { count, error } = await supabase
+          .from("employees")
+          .select("*", { count: "exact", head: true })
+          .eq("status", "Present"); // optional: add `.eq("date", today)` if attendance stored per-day
+
+        if (error) throw error;
+        setAttendanceToday(count || 0);
+
+        // also sync into localStorage so Attendance.jsx & Dashboard stay consistent
+        localStorage.setItem("presentToday", count || 0);
+        window.dispatchEvent(new Event("presentTodayUpdated"));
+      } catch (err) {
+        console.error("Error fetching attendance:", err.message);
+        setAttendanceToday(0);
+      }
+    };
+
+    fetchAttendanceToday();
+  }, []);
+
+  // Open modal
   const handleShowModal = (eventObj = null) => {
     setEditEvent(eventObj);
     if (eventObj) {
@@ -60,7 +106,7 @@ export default function Dashboard() {
     setShowModal(true);
   };
 
-  // Save event (Add or Edit)
+  // Save event
   const handleSave = async () => {
     if (!formData.date || !formData.event) return;
 
@@ -71,12 +117,13 @@ export default function Dashboard() {
         .eq("id", editEvent.id);
 
       if (error) alert("Error updating event: " + error.message);
-      else
+      else {
         setEvents(
           events.map((e) =>
             e.id === editEvent.id ? { ...e, ...formData } : e
           )
         );
+      }
     } else {
       const { data, error } = await supabase
         .from("events")
@@ -114,8 +161,11 @@ export default function Dashboard() {
 
         <h2 className="mb-5 text-muted">Welcome to WorkWise!</h2>
 
-        {/* Dashboard cards */}
-        <DashboardCards />
+        {/* ✅ Dashboard Cards */}
+        <DashboardCards
+          employeeCount={employeeCount}
+          attendanceToday={attendanceToday}
+        />
 
         {/* Events */}
         <Row className="mt-4">
@@ -146,7 +196,11 @@ export default function Dashboard() {
                       </span>
                       <div>
                         <FaEdit
-                          style={{ cursor: "pointer", marginRight: "12px", color: "#0d6efd" }}
+                          style={{
+                            cursor: "pointer",
+                            marginRight: "12px",
+                            color: "#0d6efd",
+                          }}
                           onClick={() => handleShowModal(e)}
                           title="Edit Event"
                         />
