@@ -4,13 +4,11 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import {
   Form,
-  Button,
   Container,
   Row,
   Col,
   Card,
   Image,
-  InputGroup,
 } from "react-bootstrap";
 import { PencilSquare, ArrowLeft } from "react-bootstrap-icons";
 
@@ -74,9 +72,9 @@ export default function UserProfile() {
       if (error) throw error;
 
       alert("Profile updated permanently!");
-      setEditing(false);
+      setOriginalProfile(profile);   // refresh baseline
+      setEditing(false);             // hide buttons
       setPhotoChanged(false);
-      setOriginalProfile(profile);
     } catch (err) {
       console.error("Update failed:", err.message);
       alert("Update failed: " + err.message);
@@ -130,14 +128,17 @@ export default function UserProfile() {
   if (loading) return <p className="text-center">Loading...</p>;
 
   return (
-    <Container className="mt-4 d-flex justify-content-center">
-      <Card className="shadow-lg p-4" style={{ maxWidth: "450px", width: "100%" }}>
+    <Container className="mt-4 p-4 d-flex justify-content-center ">
+      <Card
+        className="shadow-lg p-4"
+        style={{ maxWidth: "450px", width: "100%", borderRadius: "15px" }}
+      >
         {/* Back arrow */}
         <div
           style={{ cursor: "pointer", marginBottom: "10px" }}
           onClick={() => navigate("/dashboard")}
         >
-          <ArrowLeft size={22} color="#007bff" /> 
+          <ArrowLeft size={22} color="#007bff" />
         </div>
 
         {/* Profile photo + details */}
@@ -147,8 +148,8 @@ export default function UserProfile() {
               <Image
                 src={profile?.profile_photo || "https://via.placeholder.com/150"}
                 roundedCircle
-                width={100}
-                height={100}
+                width={90}
+                height={90}
               />
               <Form.Control
                 type="file"
@@ -179,9 +180,9 @@ export default function UserProfile() {
                 onClick={() => setEditing(true)}
               />
             </div>
-            <h3 className="mt-2">Hi, {profile?.full_name}!</h3>
-            <p className="mb-1">{profile?.employee_id}</p>
-            <p className="mb-3">{profile?.department}</p>
+            <h4 className="mt-2 text-muted">Hi, {profile?.full_name}!</h4>
+            <p className="mb-1 text-muted">{profile?.employee_id}</p>
+            <p className="mb-3 text-muted">{profile?.department}</p>
           </Col>
         </Row>
 
@@ -191,20 +192,15 @@ export default function UserProfile() {
             <Form onSubmit={updateProfile}>
               <Form.Group className="mb-3">
                 <Form.Label>Full Name</Form.Label>
-                <InputGroup style={{ maxWidth: "300px" }}>
-                  <Form.Control
-                    type="text"
-                    value={profile?.full_name || ""}
-                    disabled={!editing}
-                    onChange={(e) => setProfile({ ...profile, full_name: e.target.value })}
-                  />
-                  <InputGroup.Text
-                    style={{ cursor: "pointer", background: "#fff" }}
-                    onClick={() => setEditing(true)}
-                  >
-                    <PencilSquare color="#007bff" />
-                  </InputGroup.Text>
-                </InputGroup>
+                <Form.Control
+                  type="text"
+                  value={profile?.full_name || ""}
+                  onChange={(e) => {
+                    setProfile({ ...profile, full_name: e.target.value });
+                    setEditing(true); // show save/cancel when name changes
+                  }}
+                  style={{ maxWidth: "300px" }}
+                />
               </Form.Group>
 
               <Form.Group className="mb-3">
@@ -213,19 +209,24 @@ export default function UserProfile() {
                   type="email"
                   value={profile?.email || ""}
                   disabled
-                  style={{ maxWidth: "300px" }}
+                  style={{
+                    maxWidth: "300px",
+                    color: "#000",
+                    backgroundColor: "#fff",
+                  }}
                 />
               </Form.Group>
 
               {/* Change password */}
               {!showPasswordFields && (
-                <Button
-                  variant="info"
+                <button
+                  type="button"
+                  className="btn btn-info text-white mb-2"
+                  style={{ width: "150px", fontSize: "0.9rem" }}
                   onClick={() => setShowPasswordFields(true)}
-                  style={{ width: "150px", fontSize: "0.9rem", color: "#fff" }}
                 >
                   Change Password
-                </Button>
+                </button>
               )}
 
               {showPasswordFields && (
@@ -251,17 +252,18 @@ export default function UserProfile() {
                     />
                   </Form.Group>
                   <div className="d-flex gap-2">
-                    <Button
+                    <button
                       type="button"
-                      variant="info"
-                      style={{ width: "150px", fontSize: "0.9rem", color: "#fff" }}
+                      className="btn btn-info text-white"
+                      style={{ width: "150px", fontSize: "0.9rem" }}
                       onClick={handlePasswordChange}
                     >
                       Confirm
-                    </Button>
-                    <Button
-                      variant="info"
-                      style={{ width: "150px", fontSize: "0.9rem", color: "#fff" }}
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-info text-white"
+                      style={{ width: "150px", fontSize: "0.9rem" }}
                       onClick={() => {
                         setShowPasswordFields(false);
                         setNewPassword("");
@@ -269,7 +271,7 @@ export default function UserProfile() {
                       }}
                     >
                       Cancel
-                    </Button>
+                    </button>
                   </div>
                 </div>
               )}
@@ -277,20 +279,21 @@ export default function UserProfile() {
               {/* Save / Cancel */}
               {(editing || photoChanged) && (
                 <div className="mt-3 d-flex gap-2">
-                  <Button
-                    variant="info"
+                  <button
                     type="submit"
-                    style={{ width: "150px", fontSize: "0.9rem", color: "#fff" }}
+                    className="btn btn-info text-white"
+                    style={{ width: "150px", fontSize: "0.9rem" }}
                   >
                     Save Changes
-                  </Button>
-                  <Button
-                    variant="info"
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-info text-white"
+                    style={{ width: "150px", fontSize: "0.9rem" }}
                     onClick={cancelChanges}
-                    style={{ width: "150px", fontSize: "0.9rem", color: "#fff" }}
                   >
                     Cancel
-                  </Button>
+                  </button>
                 </div>
               )}
             </Form>
