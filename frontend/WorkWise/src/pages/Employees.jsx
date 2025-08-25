@@ -17,14 +17,14 @@ export default function Employees() {
   // 🔹 Filters
   const [departmentFilter, setDepartmentFilter] = useState("Filter by Department");
   const [statusFilter, setStatusFilter] = useState("All Status");
-  const [searchQuery, setSearchQuery] = useState(""); // ✅ new search state
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Fetch employees
   const fetchEmployees = async () => {
     setLoading(true);
     const { data, error } = await supabase
       .from("employees")
-      .select("*")
+      .select("*") // employee_id also comes here
       .order("id", { ascending: false });
 
     if (error) {
@@ -76,7 +76,8 @@ export default function Employees() {
     const searchMatch =
       emp.full_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       emp.job_title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      emp.department?.toLowerCase().includes(searchQuery.toLowerCase());
+      emp.department?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      emp.employee_id?.toLowerCase().includes(searchQuery.toLowerCase()); // ✅ searchable by employee_id
 
     return departmentMatch && statusMatch && searchMatch;
   });
@@ -109,10 +110,10 @@ export default function Employees() {
                 <FaSearch className="text-muted me-2" />
                 <Form.Control
                   type="text"
-                  placeholder="Search by name, role, or department"
+                  placeholder="Search by ID, name, role, or department"
                   className="border-0"
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)} // ✅ update search
+                  onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
             </Form.Group>
@@ -157,6 +158,7 @@ export default function Employees() {
           <Table hover bordered className="bg-white">
             <thead className="text-muted">
               <tr>
+                <th className="text-muted">Employee ID</th> {/* ✅ New column */}
                 <th className="text-muted">Photo</th>
                 <th className="text-muted">Name</th>
                 <th className="text-muted">Role</th>
@@ -169,14 +171,21 @@ export default function Employees() {
               {filteredEmployees.length > 0 ? (
                 filteredEmployees.map((emp) => (
                   <tr key={emp.id}>
+                    <td>{emp.employee_id}</td> {/* ✅ Show employee_id */}
                     <td>
                       <img
                         src={emp.avatar_url || "https://via.placeholder.com/50"}
                         alt={emp.full_name}
-                        style={{ width: "50px", height: "50px", borderRadius: "10%" }}
+                        style={{
+                          width: "60px",
+                          height: "60px",
+                          borderRadius: "10%",
+                          objectFit: "cover",
+                          marginLeft: "10px",
+                          marginRight: "-5px",
+                        }}
                       />
                     </td>
-                    {/* ✅ Clickable Name → navigate to Profile */}
                     <td
                       style={{ cursor: "pointer", color: "#0d6efd" }}
                       onClick={() => navigate(`/profile/${emp.id}`)}
@@ -186,22 +195,21 @@ export default function Employees() {
                     <td>{emp.job_title}</td>
                     <td>{emp.department}</td>
                     <td>
-  <span
-    style={{
-      display: "inline-block",
-      padding: "0.35em 0.6em",
-      fontSize: "0.8rem",
-      
-      fontWeight: 500,
-      lineHeight: 1,
-      color: emp.status === "Present" ? "#000" : "#721c24",
-      backgroundColor: emp.status === "Present" ? "#b0dbf5ff" : "#f7c0c4ff",
-      borderRadius: "0.5rem",
-    }}
-  >
-    {emp.status}
-  </span>
-</td>
+                      <span
+                        style={{
+                          display: "inline-block",
+                          padding: "0.35em 0.6em",
+                          fontSize: "0.8rem",
+                          fontWeight: 500,
+                          lineHeight: 1,
+                          color: emp.status === "Present" ? "#000" : "#721c24",
+                          backgroundColor: emp.status === "Present" ? "#b0dbf5ff" : "#f7c0c4ff",
+                          borderRadius: "0.5rem",
+                        }}
+                      >
+                        {emp.status}
+                      </span>
+                    </td>
                     <td>
                       <FaTrash
                         style={{ cursor: "pointer", color: "red", marginLeft: "30px" }}
@@ -215,7 +223,7 @@ export default function Employees() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="6" className="text-center">
+                  <td colSpan="7" className="text-center">
                     No employees found
                   </td>
                 </tr>
