@@ -12,6 +12,8 @@ import UserProfile from "./components/UserProfile";
 import Departments from "./pages/Departments";
 import Attendance from "./pages/Attendance";
 import NotFound from "./pages/NotFound";
+import Admins from "./pages/Admins";
+
 
 // Components
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -32,7 +34,16 @@ export default function App() {
             </ProtectedRoute>
           }
         />
-
+        
+        {/* Admins (Admin only) */}
+<Route
+  path="/admins"
+  element={
+    <ProtectedRoute requireAdmin={true}>
+      <Admins />
+    </ProtectedRoute>
+  }
+/>
         {/* User Profile route */}
         <Route
           path="/profile"

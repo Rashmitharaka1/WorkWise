@@ -70,20 +70,19 @@ export default function Dashboard() {
     fetchEmployeeCount();
   }, []);
 
-  // ✅ Fetch Present Today (from Supabase not just localStorage)
+  // ✅ Fetch Present Today
   useEffect(() => {
     const fetchAttendanceToday = async () => {
       try {
-        const today = new Date().toISOString().split("T")[0];
         const { count, error } = await supabase
           .from("employees")
           .select("*", { count: "exact", head: true })
-          .eq("status", "Present"); // optional: add `.eq("date", today)` if attendance stored per-day
+          .eq("status", "Present"); // optional: add .eq("date", today) if attendance stored per-day
 
         if (error) throw error;
         setAttendanceToday(count || 0);
 
-        // also sync into localStorage so Attendance.jsx & Dashboard stay consistent
+        // sync to localStorage
         localStorage.setItem("presentToday", count || 0);
         window.dispatchEvent(new Event("presentTodayUpdated"));
       } catch (err) {
@@ -161,7 +160,7 @@ export default function Dashboard() {
 
         <h2 className="mb-5 text-muted">Welcome to WorkWise!</h2>
 
-        {/* ✅ Dashboard Cards */}
+        {/* ✅ Dashboard Cards (includes Manage Admins now) */}
         <DashboardCards
           employeeCount={employeeCount}
           attendanceToday={attendanceToday}

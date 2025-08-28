@@ -1,14 +1,25 @@
+// src/components/DashboardCards.jsx
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function DashboardCards({ employeeCount, attendanceToday }) {
+  const navigate = useNavigate();
+
   const safeAttend = Number.isFinite(attendanceToday) ? attendanceToday : 0;
   const safeEmployees = Number.isFinite(employeeCount) ? employeeCount : 0;
 
   const cards = [
     { title: "Total Employees", count: safeEmployees },
-    { title: "Departments", count: 6 }, // ✅ exactly 6
-    { title: "Present Today", count: safeAttend }, // ✅ from Attendance.jsx via localStorage
+    { title: "Departments", count: 6 },
+    { title: "Present Today", count: safeAttend },
+    { title: "Manage Admins", count: "👤" }, // new card
   ];
+
+  const handleCardClick = (title) => {
+    if (title === "Manage Admins") {
+      navigate("/admins"); // ✅ navigate to Admins.jsx
+    }
+  };
 
   return (
     <div style={{ padding: "0px" }}>
@@ -36,7 +47,9 @@ export default function DashboardCards({ employeeCount, attendanceToday }) {
               alignItems: "center",
               justifyContent: "center",
               padding: "10px",
+              cursor: card.title === "Manage Admins" ? "pointer" : "default",
             }}
+            onClick={() => handleCardClick(card.title)}
           >
             <div
               style={{
