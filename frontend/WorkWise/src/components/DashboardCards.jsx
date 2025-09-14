@@ -1,6 +1,7 @@
 // src/components/DashboardCards.jsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { Row, Col } from "react-bootstrap";
 
 export default function DashboardCards({ employeeCount, attendanceToday }) {
   const navigate = useNavigate();
@@ -22,21 +23,12 @@ export default function DashboardCards({ employeeCount, attendanceToday }) {
   };
 
   return (
-    <div style={{ padding: "0px" }}>
-      <div
-        style={{
-          display: "flex",
-          gap: "40px",
-          marginBottom: "40px",
-          flexWrap: "wrap",
-        }}
-      >
-        {cards.map((card, index) => (
+    <Row className="g-4 mb-4">
+      {cards.map((card, index) => (
+        <Col key={index} xs={12} sm={6} md={3}>
           <div
-            key={index}
             style={{
               height: "160px",
-              width: "240px",
               borderRadius: "8px",
               background: "linear-gradient(135deg, #0d6efd, #ffffff)",
               color: "#063085ff",
@@ -48,8 +40,15 @@ export default function DashboardCards({ employeeCount, attendanceToday }) {
               justifyContent: "center",
               padding: "10px",
               cursor: card.title === "Manage Admins" ? "pointer" : "default",
+              transition: "transform 0.2s ease-in-out",
             }}
             onClick={() => handleCardClick(card.title)}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.transform = "translateY(-5px)")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.transform = "translateY(0)")
+            }
           >
             <div
               style={{
@@ -62,8 +61,8 @@ export default function DashboardCards({ employeeCount, attendanceToday }) {
             </div>
             <div style={{ fontSize: "20px" }}>{card.title}</div>
           </div>
-        ))}
-      </div>
-    </div>
+        </Col>
+      ))}
+    </Row>
   );
 }
